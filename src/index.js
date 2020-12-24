@@ -129,7 +129,7 @@ function SetupPost() {
     // effect1.uniforms['scale'].value = 6;
     // composer.addPass(effect1);
 
-    var effectFilm = new FilmPass(0.8, 0, 256, false);
+    var effectFilm = new FilmPass(0.3, 0, 0, false);
     effectFilm.renderToScreen = true;
     composer.addPass(effectFilm);
 }

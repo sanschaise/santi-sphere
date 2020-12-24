@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { BoxGeometry, LogLuvEncoding, Vector3 } from 'three';
+import { BoxGeometry, LogLuvEncoding, Vector3, VectorKeyframeTrack } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 // import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
@@ -17,6 +17,7 @@ import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 
 let scene, renderer, camera, clock, controls; // main
 let logo; // 3d assets
+let videoMaterial;
 let gui; // gui
 let mixer; // animation 
 let composer; // post-processing 
@@ -27,12 +28,14 @@ const params = {
     color: '#000000',
     reflect: true,
     reflectionIntesity: 5.0,
-    roughness: 0.0
+    roughness: 0.0,
+    fov: 50
 };
 
 
 function init() {
 
+    setupDragDrop();
     SetupGUI();
     SetupScene();
     SetupControls();
@@ -93,6 +96,7 @@ function SetupGUI() {
     var guiColor = gui.addColor(params, 'color');
     var guiReflect = gui.add(params, 'reflect');
     var guiRoughness = gui.add(params, 'roughness', 0, 1, 0.1);
+    var guifov = gui.add(params, 'fov', 5, 200, 0.1);
     var guiReflectionIntesity = gui.add(params, 'reflectionIntesity', 0, 10, 0.1);
     guiColor.onChange(function () {
         SetLogo();
@@ -106,6 +110,10 @@ function SetupGUI() {
     guiReflectionIntesity.onChange(function () {
         SetLogo();
     })
+
+    guifov.onChange(function () {
+        SetCamera();
+    })
     gui.closed = true;
 }
 
@@ -113,14 +121,20 @@ function SetupGUI() {
 function SetupScene() {
     scene = new THREE.Scene();
     scene.background = new THREE.Color("rgb(255, 255, 255)");
-    camera = new THREE.PerspectiveCamera(120, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(params.fov, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 35;
+
     camera.position.x = 0;
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
     clock = new THREE.Clock();
     window.addEventListener('resize', onWindowResize, false);
+}
+
+function SetCamera() {
+    camera.fov = params.fov;
+    camera.updateProjectionMatrix()
 }
 
 function SetupPost() {
@@ -174,12 +188,10 @@ function SetupVideoSphere() {
 
     videoTexture = new THREE.VideoTexture(video);
     env = videoTexture;
-    const material = new THREE.MeshBasicMaterial({ map: videoTexture });
+    videoMaterial = new THREE.MeshBasicMaterial({ map: videoTexture });
 
-    const mesh = new THREE.Mesh(geometry, material);
+    const mesh = new THREE.Mesh(geometry, videoMaterial);
     scene.add(mesh);
-
-
 }
 
 function SetupReflections() {
@@ -250,3 +262,61 @@ function SetLogo() {
     }
 }
 
+
+
+
+function setupDragDrop() {
+
+    const dropzone = document.getElementById('main')
+    dropzone.addEventListener('dragover', event => event.preventDefault())
+    dropzone.addEventListener('drop', event => {
+        event.preventDefault()
+        const droppedFile = event.dataTransfer.files[0]
+        const video = document.getElementById('video')
+        video.addEventListener('loadedmetadata', event => {
+            console.log(video.videoWidth, video.videoHeight)
+        })
+        video.src = URL.createObjectURL(droppedFile)
+        video.play();
+    })
+
+    // const holder = document.getElementById('drop');
+
+    // holder.ondragover = function () {
+
+    //     return false;
+    // };
+
+    // holder.ondragend = function () {
+
+    //     return false;
+    // };
+
+    // holder.ondrop = function (e) {
+
+    //     e.preventDefault();
+
+    //     var file = e.dataTransfer.files[0];
+    //     var reader = new window.FileReader();
+    //     reader.onload = function (event) {
+    //         // holder.style.background =
+    //         //     'url(' + event.target.result + ') no-repeat center';
+
+    //         // var image = document.createElement('img');
+    //         const video = document.getElementById('video');
+    //         var sources = video.getElementsByTagName('source');
+    //         console.log(event);
+    //         sources[0].src = event.target.result;
+
+    //         videoTexture = new THREE.VideoTexture(video);
+    //         env = videoTexture;
+    //         videoMaterial = new THREE.MeshBasicMaterial({ map: videoTexture });
+    //         videoTexture.needsUpdate = true;
+    //         console.log("video dropped");
+
+    //         // scene.getObjectByName('cube').material.map = texture;
+    //     };
+    //     reader.readAsDataURL(file);
+    //     return false;
+    // }
+}

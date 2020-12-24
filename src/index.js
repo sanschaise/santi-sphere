@@ -12,6 +12,8 @@ import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
 import { DotScreenShader } from 'three/examples/jsm/shaders/DotScreenShader.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
+
 
 let scene, renderer, camera, clock, controls; // main
 let logo; // 3d assets
@@ -132,6 +134,9 @@ function SetupPost() {
     var effectFilm = new FilmPass(0.3, 0, 0, false);
     effectFilm.renderToScreen = true;
     composer.addPass(effectFilm);
+
+    var fxaaPass = new ShaderPass(FXAAShader);
+    composer.addPass(fxaaPass);
 }
 
 function SetupControls() {

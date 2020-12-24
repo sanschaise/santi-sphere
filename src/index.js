@@ -37,9 +37,9 @@ function init() {
     SetupLights();
     SetupReflections()
     // AddCube()
-    loadGLTF()
+    // loadGLTF()
     SetupPost();
-    // loadOBJ()
+    loadOBJ()
 
 
 

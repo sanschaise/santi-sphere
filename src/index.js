@@ -182,7 +182,7 @@ function SetupReflections() {
 function loadGLTF() {
     const loader = new GLTFLoader();
 
-    loader.load('SR-logo.gltf', function (object) {
+    loader.load('SR-logo.glb', function (object) {
 
         logo = object.scene;
 

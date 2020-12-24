@@ -11,6 +11,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
 import { DotScreenShader } from 'three/examples/jsm/shaders/DotScreenShader.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
 
 let scene, renderer, camera, clock, controls; // main
 let logo; // 3d assets
@@ -68,7 +69,7 @@ const animate = function () {
 
 
     // renderer.render(scene, camera);
-    composer.render();
+    composer.render(delta);
 };
 
 function onWindowResize() {
@@ -124,9 +125,13 @@ function SetupPost() {
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
 
-    const effect1 = new ShaderPass(DotScreenShader);
-    effect1.uniforms['scale'].value = 6;
-    composer.addPass(effect1);
+    // const effect1 = new ShaderPass(DotScreenShader);
+    // effect1.uniforms['scale'].value = 6;
+    // composer.addPass(effect1);
+
+    var effectFilm = new FilmPass(0.8, 0, 256, false);
+    effectFilm.renderToScreen = true;
+    composer.addPass(effectFilm);
 }
 
 function SetupControls() {

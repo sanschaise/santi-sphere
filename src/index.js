@@ -20,7 +20,7 @@ let logo; // 3d assets
 let videoMaterial;
 let gui; // gui
 let mixer; // animation 
-let composer; // post-processing 
+let composer, effectFilm; // post-processing 
 
 let env, videoTexture, cubeRenderTarget, cubeCamera; // reflections
 
@@ -31,6 +31,9 @@ const params = {
     roughness: 0.0,
     fov: 50,
     rotateSpeed: 0.03,
+    post: true,
+    grain: 0.3,
+    filmLines: 25,
 };
 
 
@@ -101,6 +104,9 @@ function SetupGUI() {
     var guifov = gui.add(params, 'fov', 5, 200, 0.1);
     var guiReflectionIntesity = gui.add(params, 'reflectionIntesity', 0, 10, 0.1);
     var guiRotateSpeed = gui.add(params, 'rotateSpeed', -1, 1, 0.01);
+    var guiPost = gui.add(params, 'post');
+    var guiGrain = gui.add(params, 'grain', 0, 1, 0.1);
+    var guiFilmLines = gui.add(params, 'filmLines', 0, 555, 1);
     guiColor.onChange(function () {
         SetLogo();
     })
@@ -116,6 +122,16 @@ function SetupGUI() {
 
     guifov.onChange(function () {
         SetCamera();
+    })
+
+    guiGrain.onChange(function () {
+        SetupPost();
+    })
+    guiPost.onChange(function () {
+        SetupPost();
+    })
+    guiFilmLines.onChange(function () {
+        SetupPost();
     })
     gui.closed = true;
 }
@@ -143,18 +159,35 @@ function SetCamera() {
 function SetupPost() {
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
+    composer.reset();
+    if (params.post) {
 
-    // const effect1 = new ShaderPass(DotScreenShader);
-    // effect1.uniforms['scale'].value = 6;
-    // composer.addPass(effect1);
+        // const effect1 = new ShaderPass(DotScreenShader);
+        // effect1.uniforms['scale'].value = 6;
+        // composer.addPass(effect1);
 
-    var effectFilm = new FilmPass(0.3, 0, 0, false);
-    effectFilm.renderToScreen = true;
-    composer.addPass(effectFilm);
+        var fxaaPass = new ShaderPass(FXAAShader);
+        fxaaPass.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
+        fxaaPass.renderToScreen = true;
+        composer.addPass(fxaaPass);
 
-    var fxaaPass = new ShaderPass(FXAAShader);
-    composer.addPass(fxaaPass);
+        effectFilm = new FilmPass(params.grain, 0.2, params.filmLines, false);
+        effectFilm.renderToScreen = true;
+        composer.addPass(effectFilm);
+    }
+
+
 }
+
+// function ResetPost() {
+
+//     composer.removePass(effectFilm);
+//     effectFilm = new FilmPass(params.grain, 0, 0, false);
+//     composer.addPass(effectFilm);
+//     composer.reset();
+// }
+
+// }
 
 function SetupControls() {
     controls = new OrbitControls(camera, renderer.domElement);
@@ -182,7 +215,7 @@ function SetupLights() {
 }
 
 function SetupVideoSphere() {
-    const geometry = new THREE.SphereBufferGeometry(10, 60, 40);
+    const geometry = new THREE.SphereBufferGeometry(30, 60, 40);
     // invert the geometry on the x-axis so that all of the faces point inward
     geometry.scale(- 1, 1, 1);
     geometry.rotateY(90);
@@ -283,43 +316,5 @@ function setupDragDrop() {
         video.play();
     })
 
-    // const holder = document.getElementById('drop');
 
-    // holder.ondragover = function () {
-
-    //     return false;
-    // };
-
-    // holder.ondragend = function () {
-
-    //     return false;
-    // };
-
-    // holder.ondrop = function (e) {
-
-    //     e.preventDefault();
-
-    //     var file = e.dataTransfer.files[0];
-    //     var reader = new window.FileReader();
-    //     reader.onload = function (event) {
-    //         // holder.style.background =
-    //         //     'url(' + event.target.result + ') no-repeat center';
-
-    //         // var image = document.createElement('img');
-    //         const video = document.getElementById('video');
-    //         var sources = video.getElementsByTagName('source');
-    //         console.log(event);
-    //         sources[0].src = event.target.result;
-
-    //         videoTexture = new THREE.VideoTexture(video);
-    //         env = videoTexture;
-    //         videoMaterial = new THREE.MeshBasicMaterial({ map: videoTexture });
-    //         videoTexture.needsUpdate = true;
-    //         console.log("video dropped");
-
-    //         // scene.getObjectByName('cube').material.map = texture;
-    //     };
-    //     reader.readAsDataURL(file);
-    //     return false;
-    // }
 }

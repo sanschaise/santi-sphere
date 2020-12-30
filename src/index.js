@@ -29,7 +29,8 @@ const params = {
     reflect: true,
     reflectionIntesity: 5.0,
     roughness: 0.0,
-    fov: 50
+    fov: 50,
+    rotateSpeed: 0.03,
 };
 
 
@@ -65,6 +66,7 @@ const animate = function () {
     if (logo) {
         // logo.visible = false;
         cubeCamera.update(renderer, scene);
+        logo.rotateY(-delta * params.rotateSpeed);
         // console.log("logo here");
         // logo.material.envMap = cubeCamera.renderTarget.texture;
         // logo.visible = true;
@@ -98,6 +100,7 @@ function SetupGUI() {
     var guiRoughness = gui.add(params, 'roughness', 0, 1, 0.1);
     var guifov = gui.add(params, 'fov', 5, 200, 0.1);
     var guiReflectionIntesity = gui.add(params, 'reflectionIntesity', 0, 10, 0.1);
+    var guiRotateSpeed = gui.add(params, 'rotateSpeed', -1, 1, 0.01);
     guiColor.onChange(function () {
         SetLogo();
     })
@@ -179,7 +182,7 @@ function SetupLights() {
 }
 
 function SetupVideoSphere() {
-    const geometry = new THREE.SphereBufferGeometry(500, 60, 40);
+    const geometry = new THREE.SphereBufferGeometry(10, 60, 40);
     // invert the geometry on the x-axis so that all of the faces point inward
     geometry.scale(- 1, 1, 1);
     geometry.rotateY(90);

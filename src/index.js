@@ -13,7 +13,7 @@ import { DotScreenShader } from 'three/examples/jsm/shaders/DotScreenShader.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
-
+import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
 
 let scene, renderer, camera, clock, controls; // main
 let logo; // 3d assets
@@ -165,6 +165,16 @@ function SetupPost() {
         // const effect1 = new ShaderPass(DotScreenShader);
         // effect1.uniforms['scale'].value = 6;
         // composer.addPass(effect1);
+        // const bokehPass = new BokehPass(scene, camera, {
+        //     focus: 100.0,
+        //     aperture: 500,
+        //     maxblur: 10,
+
+        //     width: window.innerWidth,
+        //     height: window.innerHeight
+        // });
+
+        // composer.addPass(bokehPass);
 
         var fxaaPass = new ShaderPass(FXAAShader);
         fxaaPass.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);

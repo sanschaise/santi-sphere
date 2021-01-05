@@ -47,9 +47,9 @@ function init() {
     SetupLights();
     SetupReflections()
     // AddCube()
-    // loadGLTF()
+    loadGLTF("SR-Ribbon-small.gltf")
     SetupPost();
-    loadOBJ()
+    //loadOBJ()
 
 
 
@@ -247,19 +247,19 @@ function SetupReflections() {
 }
 
 
-function loadGLTF() {
+function loadGLTF(pathName) {
     const loader = new GLTFLoader();
 
-    loader.load('SR-logo.gltf', function (object) {
+    loader.load(pathName, function (object) {
 
         logo = object.scene;
 
-        mixer = new THREE.AnimationMixer(logo);
-        object.animations.forEach((clip) => { mixer.clipAction(clip).play(); });
+        // mixer = new THREE.AnimationMixer(logo);
+        // object.animations.forEach((clip) => { mixer.clipAction(clip).play(); });
         // const action = mixer.clipAction(object.animations[0]);
         // action.play();
 
-        logo.scale.set(0.01, 0.01, 0.01);
+        logo.scale.set(8, 8, 8);
         logo.position.set(1.5, 0, 0);
         SetLogo();
         scene.add(logo);
@@ -294,7 +294,7 @@ function loadOBJ() {
 }
 
 function SetLogo() {
-    const material = new THREE.MeshStandardMaterial({ metalic: 1, color: params.color, roughness: params.roughness });
+    const material = new THREE.MeshStandardMaterial({ color: params.color, roughness: params.roughness });
 
     if (params.reflect) {
         material.envMap = cubeRenderTarget.texture;

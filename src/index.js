@@ -24,16 +24,21 @@ let composer, effectFilm; // post-processing
 
 let env, videoTexture, cubeRenderTarget, cubeCamera; // reflections
 
+let objpath = "SR-Ribbon_reduced_static_01.gltf";
+
+
 const params = {
-    color: '#000000',
+    color: '#ffffff',
     reflect: true,
-    reflectionIntesity: 5.0,
+    reflectionIntesity: 1.0,
     roughness: 0.0,
+    metalic: 1.0,
     fov: 50,
     rotateSpeed: 0.0,
     post: true,
     grain: 0.3,
     filmLines: 25,
+    sphere: false,
 };
 
 
@@ -47,9 +52,9 @@ function init() {
     SetupLights();
     SetupReflections()
     // AddCube()
-    loadGLTF("SR-Ribbon_reduced_static.gltf")
+    loadGLTF(objpath)
     SetupPost();
-    //loadOBJ()
+    //loadOBJ(objpath)
 
 
 
@@ -101,12 +106,23 @@ function SetupGUI() {
     var guiColor = gui.addColor(params, 'color');
     var guiReflect = gui.add(params, 'reflect');
     var guiRoughness = gui.add(params, 'roughness', 0, 1, 0.1);
+    var guiMetalic = gui.add(params, 'metalic', 0, 1, 0.1);
     var guifov = gui.add(params, 'fov', 5, 200, 0.1);
     var guiReflectionIntesity = gui.add(params, 'reflectionIntesity', 0, 10, 0.1);
     var guiRotateSpeed = gui.add(params, 'rotateSpeed', -1, 1, 0.01);
     var guiPost = gui.add(params, 'post');
     var guiGrain = gui.add(params, 'grain', 0, 1, 0.1);
     var guiFilmLines = gui.add(params, 'filmLines', 0, 555, 1);
+    var guiSphere = gui.add(params, 'sphere');
+
+    guiSphere.onChange(function () {
+        if (params.sphere) {
+            AddSphere();
+        } else {
+            loadGLTF(objpath);
+        }
+
+    })
     guiColor.onChange(function () {
         SetLogo();
     })
@@ -114,6 +130,9 @@ function SetupGUI() {
         SetLogo();
     })
     guiRoughness.onChange(function () {
+        SetLogo();
+    })
+    guiMetalic.onChange(function () {
         SetLogo();
     })
     guiReflectionIntesity.onChange(function () {
@@ -217,6 +236,30 @@ function AddCube() {
     scene.add(cube);
 }
 
+function CreateEnvMaterial() {
+    const material = new THREE.MeshStandardMaterial({ color: params.color, roughness: params.roughness, metalness: params.metalic });
+
+    if (params.reflect) {
+        material.envMap = cubeRenderTarget.texture;
+        material.envMapIntensity = params.reflectionIntesity;
+    } else {
+        material.envMap = null;
+    }
+
+    return material;
+}
+
+function AddSphere() {
+    const geometry = new THREE.SphereGeometry(5, 255, 255);
+    const material = CreateEnvMaterial();
+    // const material = new THREE.MeshBasicMaterial({ color: params.color });
+    // material.envMap = cubeRenderTarget.texture;
+    scene.remove(logo);
+    logo = new THREE.Mesh(geometry, material);
+
+    scene.add(logo);
+}
+
 function SetupLights() {
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
@@ -273,11 +316,12 @@ function loadGLTF(pathName) {
     });
 }
 
-function loadOBJ() {
+function loadOBJ(path) {
     const loader = new OBJLoader();
 
-    loader.load('SR-logo.obj',
+    loader.load(path,
         function (object) {
+            scene.remove(logo);
             logo = object;
             logo.scale.set(0.01, 0.01, 0.01);
             logo.position.set(1.5, 0, 0);
@@ -296,29 +340,13 @@ function loadOBJ() {
 }
 
 function SetLogo() {
-    const material = new THREE.MeshStandardMaterial({ color: params.color, roughness: params.roughness });
-
-    if (params.reflect) {
-        material.envMap = cubeRenderTarget.texture;
-        material.envMapIntensity = params.reflectionIntesity;
-    } else {
-        material.envMap = null;
-    }
+    const material = CreateEnvMaterial();
 
     logo.traverse((o) => {
         if (o.isMesh) o.material = material;
     });
 
-    // console.log(logo);
 
-    // for (var i = 0; i < logo.children.length; i++) {
-    //     if (logo.children[i].children.length >= 1) {
-    //         for (var i = 0; i < logo.children[i].children.length; i++) {
-    //             logo.children[i].children.material = material;
-    //         }
-    //     }
-    //     logo.children[i].material = material;
-    // }
 }
 
 
@@ -334,7 +362,7 @@ function setupDragDrop() {
         const droppedFile = event.dataTransfer.files[0]
 
         video.addEventListener('loadedmetadata', event => {
-            console.log(video.videoWidth, video.videoHeight)
+            // console.log(video.videoWidth, video.videoHeight)
         })
         video.src = URL.createObjectURL(droppedFile)
         video.play();
@@ -346,11 +374,23 @@ function setupDragDrop() {
         event.preventDefault()
         const droppedFile = event.dataTransfer.files[0];
 
+
+        console.log(droppedFile);
+
+        let extension = droppedFile.name.split('.').pop();
+
+        if (extension == "gltf" || extension == 'glf') {
+            loadGLTF(URL.createObjectURL(droppedFile));
+        }
+        if (extension == "obj") {
+            loadOBJ(URL.createObjectURL(droppedFile));
+        }
         // const video = document.getElementById('video')
         // video.addEventListener('loadedmetadata', event => {
         //     console.log(video.videoWidth, video.videoHeight)
         // })
-        loadGLTF(URL.createObjectURL(droppedFile));
+
+
         video.play();
     })
 

@@ -30,7 +30,7 @@ const params = {
     reflectionIntesity: 5.0,
     roughness: 0.0,
     fov: 50,
-    rotateSpeed: 0.03,
+    rotateSpeed: 0.0,
     post: true,
     grain: 0.3,
     filmLines: 25,
@@ -47,7 +47,7 @@ function init() {
     SetupLights();
     SetupReflections()
     // AddCube()
-    loadGLTF("SR-Ribbon-small.gltf")
+    loadGLTF("SR-Ribbon_reduced_static.gltf")
     SetupPost();
     //loadOBJ()
 
@@ -252,15 +252,17 @@ function loadGLTF(pathName) {
 
     loader.load(pathName, function (object) {
 
+        scene.remove(logo);
         logo = object.scene;
 
-        // mixer = new THREE.AnimationMixer(logo);
-        // object.animations.forEach((clip) => { mixer.clipAction(clip).play(); });
+        mixer = new THREE.AnimationMixer(logo);
+        object.animations.forEach((clip) => { mixer.clipAction(clip).play(); });
         // const action = mixer.clipAction(object.animations[0]);
         // action.play();
 
         logo.scale.set(8, 8, 8);
         logo.position.set(1.5, 0, 0);
+        logo.rotateY(-90);
         SetLogo();
         scene.add(logo);
 
@@ -303,26 +305,52 @@ function SetLogo() {
         material.envMap = null;
     }
 
-    for (var i = 0; i < logo.children.length; i++) {
-        logo.children[i].material = material;
-    }
+    logo.traverse((o) => {
+        if (o.isMesh) o.material = material;
+    });
+
+    // console.log(logo);
+
+    // for (var i = 0; i < logo.children.length; i++) {
+    //     if (logo.children[i].children.length >= 1) {
+    //         for (var i = 0; i < logo.children[i].children.length; i++) {
+    //             logo.children[i].children.material = material;
+    //         }
+    //     }
+    //     logo.children[i].material = material;
+    // }
 }
 
 
 
 
 function setupDragDrop() {
+    var video = document.getElementById('video')
 
     const dropzone = document.getElementById('main')
     dropzone.addEventListener('dragover', event => event.preventDefault())
     dropzone.addEventListener('drop', event => {
         event.preventDefault()
         const droppedFile = event.dataTransfer.files[0]
-        const video = document.getElementById('video')
+
         video.addEventListener('loadedmetadata', event => {
             console.log(video.videoWidth, video.videoHeight)
         })
         video.src = URL.createObjectURL(droppedFile)
+        video.play();
+    })
+
+    const threedropzone = document.getElementById('objdrop')
+    threedropzone.addEventListener('dragover', event => event.preventDefault())
+    threedropzone.addEventListener('drop', event => {
+        event.preventDefault()
+        const droppedFile = event.dataTransfer.files[0];
+
+        // const video = document.getElementById('video')
+        // video.addEventListener('loadedmetadata', event => {
+        //     console.log(video.videoWidth, video.videoHeight)
+        // })
+        loadGLTF(URL.createObjectURL(droppedFile));
         video.play();
     })
 

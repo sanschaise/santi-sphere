@@ -24,7 +24,13 @@ let composer, effectFilm; // post-processing
 
 let env, videoTexture, cubeRenderTarget, cubeCamera; // reflections
 
-let objpath = "SR-Ribbon_reduced_static_01.gltf";
+let objpath = "SR-logo.obj";
+let videoPath = "videos/GranTeton_BlurTest_B.mp4";
+let videos = [
+    '3609.mp4',
+    // 'SequoiaBlurrTest_B.mp4',
+    // 'Edge 2 Edge.mp4'
+];
 
 
 const params = {
@@ -35,7 +41,7 @@ const params = {
     metalic: 1.0,
     fov: 50,
     rotateSpeed: 0.0,
-    post: true,
+    post: false,
     grain: 0.3,
     filmLines: 25,
     sphere: false,
@@ -43,7 +49,9 @@ const params = {
 
 
 function init() {
-
+    // let vidPath = videoPath;
+    // console.log("videos/" + randomFromArray(videos));
+    // SetupVideo(vidPath);
     setupDragDrop();
     SetupGUI();
     SetupScene();
@@ -52,11 +60,9 @@ function init() {
     SetupLights();
     SetupReflections()
     // AddCube()
-    loadGLTF(objpath)
+    // loadGLTF(objpath)
     SetupPost();
-    //loadOBJ(objpath)
-
-
+    loadOBJ(objpath)
 
 }
 
@@ -218,6 +224,12 @@ function SetupPost() {
 
 // }
 
+function SetupVideo(path) {
+    var video = document.getElementById('video')
+    video.src = path;
+    // video.play();
+}
+
 function SetupControls() {
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enablePan = false;
@@ -243,7 +255,7 @@ function CreateEnvMaterial() {
         material.envMap = cubeRenderTarget.texture;
         material.envMapIntensity = params.reflectionIntesity;
     } else {
-        material.envMap = null;
+        material.envgMap = null;
     }
 
     return material;
@@ -395,4 +407,17 @@ function setupDragDrop() {
     })
 
 
+}
+
+
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max + (min + 1)))
+}
+
+function randomFloat(min, max) {
+    return (Math.random() * (max + (min)))
+}
+
+function randomFromArray(array) {
+    return array[randomInt(0, array.length - 1)];
 }

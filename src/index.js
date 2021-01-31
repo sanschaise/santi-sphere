@@ -44,7 +44,7 @@ const params = {
     post: false,
     grain: 0.3,
     filmLines: 25,
-    sphere: false,
+    sphere: true,
 };
 
 
@@ -62,7 +62,12 @@ function init() {
     // AddCube()
     // loadGLTF(objpath)
     SetupPost();
-    loadOBJ(objpath)
+    if (params.sphere) {
+        AddSphere()
+    } else {
+        loadOBJ(objpath)
+    }
+
 
 }
 
@@ -296,7 +301,7 @@ function SetupVideoSphere() {
 }
 
 function SetupReflections() {
-    cubeRenderTarget = new THREE.WebGLCubeRenderTarget(528, { format: THREE.RGBFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter });
+    cubeRenderTarget = new THREE.WebGLCubeRenderTarget(1528, { format: THREE.RGBFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter });
     cubeCamera = new THREE.CubeCamera(1, 100000, cubeRenderTarget);
     scene.add(cubeCamera);
 }

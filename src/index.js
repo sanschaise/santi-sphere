@@ -36,7 +36,6 @@ const group = new THREE.Group();
 
 let env, videoTexture, cubeRenderTarget, cubeCamera; // reflections
 
-<<<<<<< HEAD
 let objpath = "TelfarOBJ.obj";
 let objScale = 0.7;
 let objPos = {
@@ -46,16 +45,6 @@ let objPos = {
 };
 let videoPath = "videos/ALLVIDEOS_R1.mp4";
 let videos = ["Edge 2 Edge.mp4"];
-=======
-let objpath = "SR-logo.obj";
-let videoPath = "videos/GranTeton_BlurTest_B.mp4";
-let videos = [
-  "3609.mp4",
-  "SequoiaBlurrTest_B.mp4",
-  "Edge 2 Edge.mp4",
-  "GranTeton_BlurTest_B.mp4",
-];
->>>>>>> parent of c43c97b (telfar branch)
 
 const params = {
   color: "#ffffff",
@@ -68,7 +57,7 @@ const params = {
   post: true,
   grain: 0.3,
   filmLines: 25,
-  sphere: true,
+  sphere: false,
 };
 
 function init() {
@@ -79,7 +68,7 @@ function init() {
   SetupVideoSphere();
   SetupLights();
   SetupReflections();
-  SetupLink();
+  // SetupLink();
   SetupPost();
   SetupRayCaster();
   if (params.sphere) {
@@ -97,6 +86,7 @@ const animate = function () {
   videoTexture.update();
   if (mixer) mixer.update(delta);
 
+  camera.translateX(delta * 5);
   //reflections
   if (logo) {
     cubeCamera.update(renderer, scene);
@@ -395,13 +385,10 @@ function loadOBJ(path) {
     function (object) {
       scene.remove(logo);
       logo = object;
-<<<<<<< HEAD
+
       logo.scale.set(objScale, objScale, objScale);
       logo.position.set(objPos.x, objPos.y, objPos.z);
-=======
-      logo.scale.set(0.01, 0.01, 0.01);
-      logo.position.set(1.5, 0, 0);
->>>>>>> parent of c43c97b (telfar branch)
+
       SetLogo();
       scene.add(logo);
       console.log("loaded");

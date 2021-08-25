@@ -402,7 +402,7 @@ function loadOBJ(path) {
       console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
     },
     function (err) {
-      console.log("An error happened " + err);
+      console.log("An error test happened " + err);
     }
   );
 }

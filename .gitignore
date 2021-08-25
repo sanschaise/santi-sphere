@@ -4,3 +4,6 @@ npm-debug.log
 .env
 .DS_Store
 .git
+
+# Local Netlify folder
+.netlify

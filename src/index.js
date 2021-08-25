@@ -36,6 +36,17 @@ const group = new THREE.Group();
 
 let env, videoTexture, cubeRenderTarget, cubeCamera; // reflections
 
+<<<<<<< HEAD
+let objpath = "TelfarOBJ.obj";
+let objScale = 0.7;
+let objPos = {
+  x: 0,
+  y: 0,
+  z: 0,
+};
+let videoPath = "videos/ALLVIDEOS_R1.mp4";
+let videos = ["Edge 2 Edge.mp4"];
+=======
 let objpath = "SR-logo.obj";
 let videoPath = "videos/GranTeton_BlurTest_B.mp4";
 let videos = [
@@ -44,6 +55,7 @@ let videos = [
   "Edge 2 Edge.mp4",
   "GranTeton_BlurTest_B.mp4",
 ];
+>>>>>>> parent of c43c97b (telfar branch)
 
 const params = {
   color: "#ffffff",
@@ -53,7 +65,7 @@ const params = {
   metalic: 1.0,
   fov: 50,
   rotateSpeed: 0.0,
-  post: false,
+  post: true,
   grain: 0.3,
   filmLines: 25,
   sphere: true,
@@ -257,7 +269,6 @@ function SetupLink() {
 
   cube.userData = {
     onClick: function () {
-      console.log("test");
       ChangeVideo();
     },
   };
@@ -384,8 +395,13 @@ function loadOBJ(path) {
     function (object) {
       scene.remove(logo);
       logo = object;
+<<<<<<< HEAD
+      logo.scale.set(objScale, objScale, objScale);
+      logo.position.set(objPos.x, objPos.y, objPos.z);
+=======
       logo.scale.set(0.01, 0.01, 0.01);
       logo.position.set(1.5, 0, 0);
+>>>>>>> parent of c43c97b (telfar branch)
       SetLogo();
       scene.add(logo);
       console.log("loaded");

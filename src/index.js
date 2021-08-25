@@ -43,8 +43,8 @@ let objPos = {
   y: 0,
   z: 0,
 };
-let videoPath = "videos/ALLVIDEOS_R1.mp4";
-let videos = ["Edge 2 Edge.mp4"];
+let videoPath = "videos/allvideos_r1.mp4";
+let videos = ["edge 2 edge.mp4"];
 
 const params = {
   color: "#ffffff",
@@ -390,7 +390,12 @@ function loadOBJ(path) {
       logo.position.set(objPos.x, objPos.y, objPos.z);
 
       SetLogo();
-      scene.add(logo);
+      logo.userData = {
+        onClick: function () {
+          ChangeVideo();
+        },
+      };
+      group.add(logo);
       console.log("loaded");
     },
     function (xhr) {

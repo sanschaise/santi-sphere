@@ -67,7 +67,7 @@ function init() {
   SetupVideoSphere();
   SetupLights();
   SetupReflections();
-  SetupLink();
+  // SetupLink();
   SetupPost();
   SetupRayCaster();
   if (params.sphere) {

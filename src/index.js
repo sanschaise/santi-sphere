@@ -26,6 +26,7 @@ let videoMaterial;
 let gui; // gui
 let mixer; // animation
 let composer, effectFilm; // post-processing
+let link;
 
 //raycasting
 const pointer = new THREE.Vector2();
@@ -67,7 +68,7 @@ function init() {
   SetupVideoSphere();
   SetupLights();
   SetupReflections();
-  // SetupLink();
+  SetupLink();
   SetupPost();
   SetupRayCaster();
   if (params.sphere) {
@@ -249,19 +250,19 @@ function onPointerClick(event) {
 }
 
 function SetupLink() {
-  const geometry = new THREE.BoxGeometry(5, 5, 1);
+  const geometry = new THREE.SphereGeometry(5, 5, 1);
   //   const material = new THREE.MeshBasicMaterial({ color: params.color });
   const material = CreateEnvMaterial();
-  const cube = new THREE.Mesh(geometry, material);
-  cube.position.x = 10;
+  link = new THREE.Mesh(geometry, material);
+  link.position.x = 100;
 
-  cube.userData = {
+  link.userData = {
     onClick: function () {
       console.log("test");
       ChangeVideo();
     },
   };
-  group.add(cube);
+  group.add(link);
 }
 
 function SetupVideo(path) {
@@ -326,7 +327,7 @@ function SetupLights() {
 
 function SetupVideoSphere() {
   const geometry = new THREE.SphereBufferGeometry(30, 60, 40);
-  geometry.scale(-1, 1, 1);
+  geometry.scale(-5, 5, 5);
   geometry.rotateY(90);
   const video = document.getElementById("video");
   video.play();

@@ -91,6 +91,9 @@ const animate = function () {
     cubeCamera.update(renderer, scene);
     logo.rotateY(-delta * params.rotateSpeed);
   }
+
+  link
+
   RunRayCaster();
   composer.render(delta);
 };
@@ -184,6 +187,7 @@ function SetupRayCaster() {
   raycaster = new THREE.Raycaster();
   document.addEventListener("mousemove", onPointerMove);
   document.addEventListener("click", onPointerClick);
+  document.addEventListener("touchEnd", onPointerClick);
 }
 
 function RunRayCaster() {

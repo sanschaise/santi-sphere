@@ -70,12 +70,9 @@ function init() {
   SetupReflections();
   // SetupLink();
   SetupPost();
-  // SetupRayCaster();
+  SetupRayCaster();
   // loadOBJ(objpath);
-  AddSphere();
-
-
-
+  // AddSphere();
 
 
 
@@ -103,7 +100,7 @@ const animate = function () {
 
   link
 
-  // RunRayCaster();
+  RunRayCaster();
   composer.render(delta);
 };
 
@@ -348,7 +345,7 @@ function SetupLights() {
 
 function SetupVideoSphere() {
   const geometry = new THREE.SphereBufferGeometry(30, 60, 40);
-  geometry.scale(-0.1, 0.1, 0.1);
+  geometry.scale(-5, 5, 5);
   geometry.rotateY(90);
   const video = document.getElementById("video");
   video.play();

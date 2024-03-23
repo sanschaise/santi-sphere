@@ -62,20 +62,26 @@ const params = {
 
 function init() {
   setupDragDrop();
-  //   SetupGUI();
+  SetupGUI();
   SetupScene();
   SetupControls();
   SetupVideoSphere();
   SetupLights();
   SetupReflections();
-  SetupLink();
+  // SetupLink();
   SetupPost();
-  SetupRayCaster();
-  if (params.sphere) {
-    AddSphere();
-  } else {
-    loadOBJ(objpath);
-  }
+  // SetupRayCaster();
+  // loadOBJ(objpath);
+  AddSphere();
+
+
+
+  // scene.add(arrow);
+  // arrow.scale.set(0.01, 0.01, 0.01);
+  // arrow.position.set(1.5, 0, 0);
+
+
+
 }
 
 const animate = function () {
@@ -94,7 +100,7 @@ const animate = function () {
 
   link
 
-  RunRayCaster();
+  // RunRayCaster();
   composer.render(delta);
 };
 
@@ -165,7 +171,9 @@ function SetupGUI() {
 
 function SetupScene() {
   scene = new THREE.Scene();
-  scene.background = new THREE.Color("rgb(255, 255, 255)");
+  // scene.background = new THREE.Color("rgb(255, 255, 255)");
+  scene.background = new THREE.Color(0x000000); // Or use new THREE.Color(0x000000) for a black background, for example
+
   camera = new THREE.PerspectiveCamera(
     params.fov,
     window.innerWidth / window.innerHeight,
@@ -254,10 +262,20 @@ function onPointerClick(event) {
 }
 
 function SetupLink() {
-  const geometry = new THREE.SphereGeometry(5, 5, 1);
+  const geometry = new THREE.SphereGeometry(2, 15, 15);
   //   const material = new THREE.MeshBasicMaterial({ color: params.color });
-  const material = CreateEnvMaterial();
+  const material = new THREE.MeshPhysicalMaterial({
+    color: 0x000000,
+    metalness: 0,
+    roughness: 0,
+    clearcoat: 0.5,
+    clearcoatRoughness: 0.5,
+    reflectivity: 0.5,
+    envMap: cubeRenderTarget.texture,
+
+  });
   link = new THREE.Mesh(geometry, material);
+
   link.position.x = 100;
 
   link.userData = {
@@ -313,11 +331,7 @@ function AddSphere() {
   const material = CreateEnvMaterial();
   scene.remove(logo);
   logo = new THREE.Mesh(geometry, material);
-  logo.userData = {
-    onClick: function () {
-      window.open("https://www.madeatartcamp.com/");
-    },
-  };
+
 
   group.add(logo);
 }
@@ -331,7 +345,7 @@ function SetupLights() {
 
 function SetupVideoSphere() {
   const geometry = new THREE.SphereBufferGeometry(30, 60, 40);
-  geometry.scale(-5, 5, 5);
+  geometry.scale(-0.1, 0.1, 0.1);
   geometry.rotateY(90);
   const video = document.getElementById("video");
   video.play();
@@ -351,7 +365,7 @@ function SetupReflections() {
     minFilter: THREE.LinearMipmapLinearFilter,
   });
   cubeCamera = new THREE.CubeCamera(1, 100000, cubeRenderTarget);
-  scene.add(cubeCamera);
+  // scene.add(cubeCamera);
 }
 
 function loadGLTF(pathName) {
@@ -379,6 +393,29 @@ function loadGLTF(pathName) {
       console.error(error);
     }
   );
+}
+
+function load3d(path) {
+  const loader = new OBJLoader();
+
+  let promise = new Promise(function (resolve, reject) {
+    loader.load(
+      path,
+      function (object) {
+        resolve(object)
+      },
+      function (xhr) {
+        console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+      },
+      function (err) {
+        console.log("An error happened " + err);
+      }
+    );
+  });
+
+  return promise;
+
+
 }
 
 function loadOBJ(path) {
